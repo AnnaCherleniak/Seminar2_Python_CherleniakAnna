@@ -15,30 +15,42 @@ MIN_SUM_PERCENT = 30
 MAX_SUM_PERCENT = 600
 LIMIT_TRANSACTION = 3
 PERCENT_FOR_TRANSACTION = 3
+SUM_WEALTH = 5_000_000
+TAX_ON_WEALTH = 10
 
 summ = 0
-count_replenishment = 0
-count_withdrawal = 0
+count_transaction = 0
 
 while True:
-    action = input('Ваше действие? Нажмите п - если хотите ПОПОЛНИТЬ,\n'
+    action = input('Ваше действие?:\n'
+                   'Нажмите п - если хотите ПОПОЛНИТЬ,\n'
                    'Нажмите с - если хотите СНЯТЬ,\n'
                    'Нажмите в - если хотите ВЫЙТИ,\n')
     if action == 'п':
         temp = int(input(f'сумма пополнения, кратно {MULTIPLICITY}: '))
+
+        if summ > SUM_WEALTH:
+            sum_tax_wealth = round(summ * TAX_ON_WEALTH / 100)
+            summ -= sum_tax_wealth
+
         if temp % MULTIPLICITY != 0:
             continue
 
-        sum_for_replenish = 0
-        count_replenishment += 1
-        if count_replenishment == LIMIT_TRANSACTION:
-            count_replenishment = 0
-            sum_for_replenish = round(temp * PERCENT_FOR_TRANSACTION / 100)
+        sum_for_transaction = 0
+        count_transaction += 1
+        if count_transaction == LIMIT_TRANSACTION:
+            count_transaction = 0
+            sum_for_transaction = round(temp * PERCENT_FOR_TRANSACTION / 100)
 
-        summ += (temp - sum_for_replenish)
+        summ += (temp - sum_for_transaction)
         print(f'Остаток денег на счету - {summ}')
     elif action == 'с':
         temp = int(input(f'сумма снятия, кратно {MULTIPLICITY}: '))
+
+        if summ > SUM_WEALTH:
+            sum_tax_wealth = round(summ * TAX_ON_WEALTH / 100)
+            summ -= sum_tax_wealth
+
         if temp % MULTIPLICITY != 0:
             continue
 
@@ -48,17 +60,17 @@ while True:
         elif sum_percent_withdrawal > MAX_SUM_PERCENT:
             sum_percent_withdrawal = MAX_SUM_PERCENT
 
-        sum_for_withd = 0
-        count_withdrawal += 1
-        if count_withdrawal == LIMIT_TRANSACTION:
-            count_withdrawal = 0
-            sum_for_withd = round(temp * PERCENT_FOR_TRANSACTION / 100)
+        sum_for_transaction = 0
+        count_transaction += 1
+        if count_transaction == LIMIT_TRANSACTION:
+            count_transaction = 0
+            sum_for_transaction = round(temp * PERCENT_FOR_TRANSACTION / 100)
         
-        if (temp + sum_percent_withdrawal + sum_for_withd) > summ:
+        if (temp + sum_percent_withdrawal + sum_for_transaction) > summ:
             print('Недостаточно средств для снятия!')
             continue
         
-        summ -= (temp + sum_percent_withdrawal + sum_for_withd)
+        summ -= (temp + sum_percent_withdrawal + sum_for_transaction)
         print(f'Остаток денег на счету - {summ}')
     elif action == 'в':
         print(f'Остаток денег на счету - {summ}')
